@@ -1,4 +1,5 @@
 import streamlit as st
+import nltk_setup
 from ats_score import ats_score
 from similarity import similarity_score
 from extract_text import extract_text_pdf
