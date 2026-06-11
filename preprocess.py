@@ -2,13 +2,18 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+import re
+import nltk_setup
 
 stop_words=set(stopwords.words("english"))
 root_word=WordNetLemmatizer()
 
 def preprocess_text(text):
+    if not text:
+        return ""
     text=text.lower()
     tokens_temp=word_tokenize(text)
+    #tokens_temp=re.findall(r"\b\w+\b",text)
     tokens1=[]
     tokens=[]
     for word in tokens_temp:
