@@ -1,0 +1,8 @@
+streamlit
+reportlab
+nltk
+scikit-learn
+numpy
+pandas
+pdfplumber
+google-generativeai
