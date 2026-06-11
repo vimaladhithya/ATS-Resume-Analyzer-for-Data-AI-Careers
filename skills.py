@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 
-skills_db = pd.read_csv(r"data\skills.csv")
+skills_db = pd.read_csv("data/skills.csv")
 
 def extract_skills(text):
     if isinstance(text, list):
