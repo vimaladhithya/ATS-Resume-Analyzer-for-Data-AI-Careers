@@ -12,6 +12,9 @@ from optimize_resume_gemini import improve_resume
 from io import BytesIO
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
+import google.generativeai as genai
+
+
 
 if "optimized_resume" not in st.session_state:
     st.session_state.optimized_resume = ""
@@ -49,9 +52,13 @@ if "ai_feedback" not in st.session_state:
 if "jd_skills" not in st.session_state:
     st.session_state.jd_skills = ""
 
-st.set_page_config(page_title="ATS AI Chatbot", layout="wide")
+st.set_page_config(
+    page_title="ATS AI Chatbot",
+    page_icon="🤖",
+    layout="wide"
+)
 
-st.title("AI-Powered ATS Resume Analyzer for Data & AI Careers")
+st.title("AI-Powered ATS Resume Analyzer and Optimizer for Data & AI Careers")
 st.markdown("Upload Resume + Job Description to get ATS Score, Similarity & AI Feedback")
 
 resume_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"])
@@ -60,6 +67,7 @@ option = st.radio(
     "Choose Input Method",
     ["Job Description", "Skill Requirements"]
 )
+
 
 jd_text = ""
 jd_skills=""
@@ -70,6 +78,13 @@ else:
     manual_skills = st.text_input("Enter Skill Requirements (comma separated)", "")
     jd_skills= [s.strip().lower() for s in manual_skills.split(",")]
     jd_skills = ", ".join(jd_skills) 
+
+api_key = st.secrets["GEMINI_API_KEY"]
+genai.configure(api_key=api_key)
+models = [model.name for model in genai.list_models()]
+
+selected_model_temp = st.selectbox("Select Gemini Model",models)
+selected_model=selected_model_temp.split("/")[1]
 
 
 if st.button("Analyze Resume"):
@@ -116,7 +131,8 @@ if st.button("Analyze Resume"):
             jd_text,
             matched,
             missing,
-            score
+            score,
+            selected_model
         )
     else:
         ai_feedback = gen_ai(
@@ -124,7 +140,8 @@ if st.button("Analyze Resume"):
             jd_skills,
             matched,
             missing,
-            score
+            score,
+            selected_model
         )
 
     st.session_state.analyzed=True
@@ -178,12 +195,14 @@ if st.session_state.analyzed==True:
         if st.session_state.jd_text:
             st.session_state.optimized_resume = improve_resume(
                 st.session_state.resume_text,
-                st.session_state.jd_text
+                st.session_state.jd_text,
+                selected_model
             )
         else:
             st.session_state.optimized_resume = improve_resume(
                 st.session_state.resume_text,
-                st.session_state.jd_skills
+                st.session_state.jd_skills,
+                selected_model
             )
 
        

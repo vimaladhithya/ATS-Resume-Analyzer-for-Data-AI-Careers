@@ -1,12 +1,8 @@
 import google.generativeai as genai
-import os
 import streamlit as st
 
-api_key = st.secrets["GEMINI_API_KEY"]
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-2.5-flash")
-
-def gen_ai(resume_text,jd_text,matched_skills,missing_skills,final_score):
+def gen_ai(resume_text,jd_text,matched_skills,missing_skills,final_score,selected_model):
+        model = genai.GenerativeModel(selected_model)
         prompt = f"""
         You are an ATS resume expert.
         Resume:{resume_text}
